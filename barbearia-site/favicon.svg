@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<title>Barbearia Navalha</title>
+<style>.o{stroke:#101B2D}.c{fill:#101B2D}@media (prefers-color-scheme:dark){.o{stroke:#E8EDF5}.c{fill:#E8EDF5}}</style>
+<defs><clipPath id="p"><rect x="18" y="9" width="28" height="46" rx="14"/></clipPath></defs>
+<rect class="c" x="14" y="3" width="36" height="9" rx="3"/>
+<rect class="c" x="14" y="52" width="36" height="9" rx="3"/>
+<g clip-path="url(#p)"><g transform="rotate(-38 32 32)">
+<rect x="-20" y="-30" width="110" height="7" fill="#C0392B"/>
+<rect x="-20" y="-23" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="-16" width="110" height="7" fill="#1B3A6B"/>
+<rect x="-20" y="-9" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="-2" width="110" height="7" fill="#C0392B"/>
+<rect x="-20" y="5" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="12" width="110" height="7" fill="#1B3A6B"/>
+<rect x="-20" y="19" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="26" width="110" height="7" fill="#C0392B"/>
+<rect x="-20" y="33" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="40" width="110" height="7" fill="#1B3A6B"/>
+<rect x="-20" y="47" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="54" width="110" height="7" fill="#C0392B"/>
+<rect x="-20" y="61" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="68" width="110" height="7" fill="#1B3A6B"/>
+<rect x="-20" y="75" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="82" width="110" height="7" fill="#C0392B"/>
+<rect x="-20" y="89" width="110" height="7" fill="#F7F8FA"/>
+<rect x="-20" y="96" width="110" height="7" fill="#1B3A6B"/>
+</g></g>
+<rect class="o" x="18" y="9" width="28" height="46" rx="14" fill="none" stroke-width="3"/>
+</svg>

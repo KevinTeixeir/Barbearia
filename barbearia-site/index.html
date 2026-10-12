@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Barbearia Navalha</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+html { color-scheme: light; }
+body { margin: 0; background: var(--bg); }
+/* Layout: cabeçalho fino, apresentação com poste de barbeiro, depois fluxo de agendamento em 2 passos com barra de confirmação fixa embaixo. */
+:root {
+  --bg: #EEF1F4;
+  --surface: #FFFFFF;
+  --fg: #101B2D;
+  --muted: #53607A;
+  --line: #CBD3DE;
+  --accent: #C0392B;
+  --accent-fg: #FFFFFF;
+  --navy: #1B3A6B;
+  --pole-w: #F7F8FA;
+  --taken-bg: #E3E8EE;
+  --taken-fg: #8793A6;
+  --focus: #1B3A6B;
+  --font-display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1424; --surface: #142038; --fg: #E8EDF5; --muted: #9AA8C0; --line: #2B3B59;
+    --accent: #E5584A; --accent-fg: #14090A; --navy: #6F96D8; --pole-w: #E8EDF5;
+    --taken-bg: #1A2742; --taken-fg: #62718C; --focus: #9DBBEF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1424; --surface: #142038; --fg: #E8EDF5; --muted: #9AA8C0; --line: #2B3B59;
+  --accent: #E5584A; --accent-fg: #14090A; --navy: #6F96D8; --pole-w: #E8EDF5;
+  --taken-bg: #1A2742; --taken-fg: #62718C; --focus: #9DBBEF;
+  color-scheme: dark;
+}
+/* loader */
+[hidden] { display: none !important; }
+.loader { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--bg); opacity: 0; animation: loader-in .3s ease .5s forwards; }
+.loader-box { width: min(360px, 100%); text-align: center; }
+.loader-pole {
+  height: 30px; border-radius: 15px; border: 3px solid var(--fg);
+  background: repeating-linear-gradient(-45deg, var(--accent) 0 14px, var(--pole-w) 14px 28px, var(--navy) 28px 42px, var(--pole-w) 42px 56px);
+  background-size: 79.2px 79.2px;
+  box-shadow: inset 0 7px 0 rgba(255,255,255,.22), inset 0 -7px 0 rgba(0,0,0,.14);
+  animation: loader-move 1.1s linear infinite;
+}
+.loader p { margin: 16px 0 0; font-family: var(--font-body); font-weight: 600; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+@keyframes loader-in { to { opacity: 1; } }
+@keyframes loader-move { to { background-position: 79.2px 0; } }
+@media (prefers-reduced-motion: reduce) { .loader-pole { animation: none; } }
+</style>
+<link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="style.css"></noscript>
+</head>
+<body>
+<div class="loader" id="loader" role="status" aria-live="polite">
+  <div class="loader-box">
+    <div class="loader-pole" aria-hidden="true"></div>
+    <p>Carregando a agenda…</p>
+  </div>
+</div>
+
+<div id="app-main">
+  <div class="bleed stripe" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="top">
+      <div class="brand" id="brand-name">Barbearia Navalha</div>
+      <a class="link" href="#agendar">Agendar horário</a>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Corte, barba e acabamento</p>
+        <h1 id="hero-title">Navalha<br><span>afiada.</span><br>Agenda cheia.</h1>
+        <p class="lead">Atendimento com hora marcada, uma cadeira por cliente e uma hora inteira dedicada ao seu corte. Escolha o horário, o serviço e confirme pelo WhatsApp em menos de um minuto.</p>
+        <div class="facts">
+          <div class="fact"><b>Seg a Sáb</b><span>das 9h às 17h</span></div>
+          <div class="fact"><b>2 barbeiros</b><span>cada um com sua agenda</span></div>
+          <div class="fact"><b>1 hora</b><span>por atendimento</span></div>
+          <div class="fact"><b>Pix e cartão</b><span>pague na cadeira</span></div>
+        </div>
+        <a class="cta" href="#agendar">Escolher meu horário</a>
+      </div>
+      <div class="pole" aria-hidden="true"></div>
+    </section>
+
+    <section class="booking" id="agendar" aria-labelledby="book-title">
+      <div class="sec-head">
+        <h2 id="book-title">Agende seu corte</h2>
+        <p>Três passos: barbeiro, horário e serviço.</p>
+      </div>
+
+      <div class="step">
+        <span class="step-label">Passo 1 · Barbeiro</span>
+        <div class="barbers" id="barbers" role="group" aria-label="Escolha o barbeiro"></div>
+      </div>
+
+      <div class="step">
+        <span class="step-label">Passo 2 · Horário</span>
+        <div class="days" id="days" role="group" aria-label="Escolha o dia"></div>
+        <div class="slots" id="slots" role="group" aria-label="Escolha o horário"></div>
+        <div class="legend">
+          <span><i></i>Livre</span>
+          <span><i class="sel"></i>Seu horário</span>
+          <span><i class="off"></i>Indisponível</span>
+        </div>
+        <p class="hint" id="slot-hint">Cada atendimento dura 1 hora. Ao reservar, os horários dentro dessa hora ficam indisponíveis para outros clientes.</p>
+      </div>
+
+      <div class="step">
+        <span class="step-label">Passo 3 · Serviço</span>
+        <div class="services" id="services" role="group" aria-label="Escolha o serviço"></div>
+      </div>
+    </section>
+
+    <section class="mine" id="mine" hidden aria-labelledby="mine-title">
+      <div class="sec-head">
+        <h2 id="mine-title">Meus agendamentos</h2>
+        <p>Não vai mais? Cancele e libere o horário.</p>
+      </div>
+      <ul class="mine-list" id="mine-list"></ul>
+      <p class="hint" id="mine-note" hidden></p>
+    </section>
+
+    <footer class="foot">
+      <div><h3>Endereço</h3><p id="addr">Rua Exemplo, 123 · Centro</p></div>
+      <div><h3>Funcionamento</h3><p>Segunda a sábado, das 9h às 17h. Domingo fechado.</p></div>
+      <div><h3>Pagamento</h3><p>Pix, dinheiro, cartão de débito ou crédito.</p></div>
+    </footer>
+    <div class="bleed checks" aria-hidden="true"></div>
+  </div>
+
+  <div class="bar" id="bar">
+    <div class="wrap">
+      <div class="sum" id="sum"><b>Nenhum horário escolhido</b><span>Selecione dia, horário e serviço.</span></div>
+      <button class="cta" id="confirm" type="button" disabled>Confirmar agendamento</button>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <h2 id="m-title">Quase lá</h2>
+    <p class="recap" id="m-recap"></p>
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="f-name">Seu nome</label>
+        <input type="text" id="f-name" name="nome" autocomplete="name" placeholder="Como devemos te chamar?" maxlength="60">
+        <div class="err" id="err-name" role="alert"></div>
+      </div>
+      <div class="field">
+        <span class="lab" id="pay-lab">Forma de pagamento</span>
+        <div class="pays" id="pays" role="group" aria-labelledby="pay-lab"></div>
+        <div class="err" id="err-pay" role="alert"></div>
+      </div>
+      <div class="actions">
+        <button class="cta" type="submit">Finalizar e abrir WhatsApp</button>
+        <button class="ghost" type="button" id="m-cancel">Voltar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<main class="wrap thanks" id="thanks" hidden>
+  <p class="eyebrow">Agendamento enviado</p>
+  <h1>Valeu, <span id="t-name"></span>!</h1>
+  <dl class="ticket" id="ticket"></dl>
+  <p class="note" id="t-note"></p>
+  <a class="cta" id="t-link" href="#" target="_blank" rel="noopener">Abrir WhatsApp agora</a>
+  <div id="t-cancel-row"><button class="ghost" id="t-cancel" type="button">Cancelar este agendamento</button></div>
+  <div class="confirm" id="t-confirm" hidden>
+    <p>Cancelar este horário? Ele volta a ficar livre para outros clientes.</p>
+    <div class="actions">
+      <button class="cta" id="t-yes" type="button">Sim, cancelar</button>
+      <button class="ghost" id="t-no" type="button">Manter</button>
+    </div>
+  </div>
+  <a class="notify" id="t-notify" href="#" target="_blank" rel="noopener" hidden>Avisar a barbearia no WhatsApp</a>
+  <button class="back" id="t-back" type="button">Fazer outro agendamento</button>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
