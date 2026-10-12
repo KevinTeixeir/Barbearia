@@ -335,15 +335,13 @@
 
   // cancelar pela página de agradecimento
   $("t-cancel").addEventListener("click", function () {
-    clearInterval(timer);
     $("t-cancel-row").hidden = true; $("t-confirm").hidden = false;
   });
   $("t-no").addEventListener("click", function () {
     $("t-confirm").hidden = true; $("t-cancel-row").hidden = false;
-    $("t-note").textContent = "Tudo certo. Use o botão acima para abrir o WhatsApp e enviar seus dados.";
+    $("t-note").textContent = "Tudo certo. Use o botão abaixo para abrir o WhatsApp e enviar seus dados.";
   });
   $("t-yes").addEventListener("click", function () {
-    clearInterval(timer);
     var f = lastBooking ? cancelBooking(lastBooking.id) : null;
     lastBooking = null;
     $("t-confirm").hidden = true; $("t-cancel-row").hidden = true; $("t-link").hidden = true;
@@ -407,7 +405,6 @@
   });
 
   // ---- finalizar ----
-  var timer = null;
   function buildLink(name, s) {
     var msg = "Olá! Acabei de agendar pelo site da " + CONFIG.name + ".\n\n" +
       "*Nome:* " + name + "\n" +
@@ -419,19 +416,6 @@
       "*Pagamento:* " + state.pay + "\n\n" +
       "Pode confirmar meu horário?";
     return "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg);
-  }
-  // Abre o WhatsApp em nova aba. Precisa ser chamado direto no clique, senão o navegador bloqueia.
-  function openWhatsApp(url) {
-    var w = null;
-    try { w = window.open(url, "_blank"); if (w) w.opener = null; } catch (e) {}
-    return !!w;
-  }
-  // Plano B depois da contagem: na mesma aba (site hospedado) ou nova aba (prévia).
-  function goWhatsApp(url) {
-    var embedded = false;
-    try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
-    if (!embedded) { window.location.href = url; return true; }
-    return openWhatsApp(url);
   }
 
   $("form").addEventListener("submit", function (e) {
@@ -452,7 +436,6 @@
     mineNotice = null; mineConfirm = null;
 
     var url = buildLink(name, s);
-    var opened = openWhatsApp(url);
     $("t-name").textContent = name.split(/\s+/)[0];
     var tk = $("ticket"); tk.textContent = "";
     [["Barbeiro", barber().name], ["Data", longDate(state.date)], ["Horário", fmt(state.time) + " às " + fmt(state.time + CONFIG.durationMin)],
@@ -469,25 +452,10 @@
     $("thanks").hidden = false;
     window.scrollTo(0, 0);
 
-    var left = 5, note = $("t-note");
-    clearInterval(timer);
-    if (opened) {
-      note.textContent = "O WhatsApp abriu com todos os dados do agendamento já escritos. Falta só tocar em enviar.";
-      return;
-    }
-    note.textContent = "Abrindo o WhatsApp da barbearia em " + left + "s para enviar seus dados.";
-    timer = setInterval(function () {
-      left--;
-      if (left > 0) { note.textContent = "Abrindo o WhatsApp da barbearia em " + left + "s para enviar seus dados."; return; }
-      clearInterval(timer);
-      var ok = goWhatsApp(url);
-      note.textContent = ok ? "WhatsApp aberto. Envie a mensagem para a barbearia confirmar seu horário."
-                            : "Toque no botão abaixo para abrir o WhatsApp e enviar seus dados.";
-    }, 1000);
+    $("t-note").textContent = "Falta só um passo: toque no botão abaixo para abrir o WhatsApp com todos os dados do agendamento já escritos e envie para a barbearia.";
   });
 
   $("t-back").addEventListener("click", function () {
-    clearInterval(timer);
     $("thanks").hidden = true; $("app-main").hidden = false;
     state.barber = null; state.time = null; state.service = null; state.pay = null; $("f-name").value = "";
     days = []; state.date = null;
